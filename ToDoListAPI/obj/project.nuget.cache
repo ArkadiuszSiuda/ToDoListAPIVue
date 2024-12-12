@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ja+/H5YIuBE=",
+  "dgSpecHash": "nX6lMalhNFg=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Tenader\\source\\repos\\ToDoListAPI\\ToDoListAPI\\ToDoListAPI.csproj",
+  "projectFilePath": "C:\\Users\\Tenader\\source\\repos\\ToDoListAPI\\ToDoListAPIVue\\ToDoListAPIVue\\ToDoListAPI\\ToDoListAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Tenader\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Tenader\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",

@@ -57,8 +57,13 @@ const handleDeleteAssignment = (id?: string) => {
   })
 }
 
-const handleFilterAssignmentsByDate = () =>
-  assignmentService.filterAssignmentsByDate(selectedDate.value ?? new Date(), assignments)
+const handleFilterAssignmentsByDate = () => {
+  if (!selectedDate.value) {
+    handleGetAllAssignments()
+  } else {
+    assignmentService.filterAssignmentsByDate(selectedDate.value, assignments)
+  }
+}
 
 const handleChangeAssignmentState = (assignment: Assignment) => {
   assignmentService.changeAssignmentState(assignment).then(() => {
@@ -67,16 +72,30 @@ const handleChangeAssignmentState = (assignment: Assignment) => {
 }
 
 const checkTasksWithOneDayLeft = () => {
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const now = new Date().getTime()
+  const oneDayInMs = 86400000
+
   tasksWithOneDayLeft.value = assignments.value.filter((task) => {
-    if (task.isCompleted) {
-      return false
-    }
-    const deadline = new Date(task.deadline)
-    const taskDeadline = new Date(deadline.getFullYear(), deadline.getMonth(), deadline.getDate())
-    return taskDeadline.getTime() <= today.getTime()
+    if (task.isCompleted) return false
+    const deadline = new Date(task.deadline).getTime()
+    return deadline <= now || (deadline > now && deadline - now <= oneDayInMs)
   })
+
+  console.log('Filtered tasks (urgent or overdue):', tasksWithOneDayLeft.value)
+}
+
+const isTaskUrgent = (task: Assignment) => {
+  if (task.isCompleted) return false
+  const now = new Date().getTime()
+  const deadline = new Date(task.deadline).getTime()
+  return deadline > now && deadline - now <= 86400000
+}
+
+const isTaskOverdue = (task: Assignment) => {
+  if (task.isCompleted) return false
+  const now = new Date()
+  const deadline = new Date(task.deadline)
+  return deadline.getTime() < now.getTime()
 }
 
 const getSortedData = () => {
@@ -153,6 +172,8 @@ const cancelAdding = () => (isAdding.value = false)
       :class="{
         'editing-card': isEditing && currentEditingId === card.id,
         'completed-card': card.isCompleted,
+        'urgent-card': isTaskUrgent(card),
+        'overdue-card': isTaskOverdue(card),
       }"
     >
       <template #title>
@@ -175,6 +196,7 @@ const cancelAdding = () => (isAdding.value = false)
               v-model="assignment.deadline"
               id="deadline"
               showTime
+              hideOnDateTimeSelect
               placeholder="Wybierz datę zakończenia"
             />
           </div>
@@ -274,6 +296,7 @@ const cancelAdding = () => (isAdding.value = false)
             id="deadline"
             required
             showTime
+            hideOnDateTimeSelect
             placeholder="Wybierz termin wykonania"
           />
         </div>
